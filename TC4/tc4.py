@@ -210,7 +210,7 @@ start = time.time()
 
 file = open('features.csv', 'w', newline='')
 writer = csv.writer(file)
-header = ['Image', 'Minimum', 'Maximum', 'Squared Dynamic Range', 'Mean', 'Standard Deviation',
+header = ['Minimum', 'Maximum', 'Squared Dynamic Range', 'Mean', 'Standard Deviation',
           'Variance', 'Skewness', 'Kurtosis', '92.5 Percentile', '85 Percentile', '15 Percentile',
           '7.5 Percentile', 'Interquartile Range', 'Median', 'Shannon Entropy', 'Bins Entropy',
           'Normalized Energy', 'Root Mean Square', 'Mean Absolute Deviation', 'Robust Mean Absolute Deviaton', 'label']
@@ -248,7 +248,7 @@ for folder in folders:
         cont += 1
         cont_folder += 1
         #print("Image: "+str(cont))
-        index = "Img"+str(cont)
+        # index = "Img"+str(cont)
         pmf = pmfunction(img)
 
         min, max = min_and_max(img)
@@ -270,7 +270,7 @@ for folder in folders:
         rms = RMS(pmf)
         mad, rmad = featuresImgPixels(img, mean)
 
-        row = [index, min, max, squared_dyn_range, mean, standart_deviation, var, skew,
+        row = [min, max, squared_dyn_range, mean, standart_deviation, var, skew,
                kurt, percentile92_5, percentile85, percentile15, percentile7_5, interquartilerange,
                median, shannon, bins, energy, rms, mad, rmad, label]
         writer.writerow(row)
