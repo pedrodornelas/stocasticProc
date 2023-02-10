@@ -15,19 +15,18 @@ def readCsv(file):
 def setTrainingData(trainingRate, dataset):
     n = len(dataset)-1 # delete line 1
     m = round(n*trainingRate)
-    print("Length dataset: "+str(n))
-    print("Length trainingDataset: "+str(m))
+    # print("Length dataset: "+str(n))
+    # print("Length trainingDataset: "+str(m))
     aux = random.sample(range(1,n), m)  # select m different numbers in range 1:n
     aux.sort()
 
+    testData = dataset.copy()
+    testData.remove(dataset[0])
     trainingData = []
-    testData = dataset
+    
     for i in aux:
-        print("i: "+str(i))
-        print("len: "+str(len(testData)))
-        print(dataset[i])
         trainingData.append(dataset[i])
-        testData.remove(testData[i])
+        testData.remove(dataset[i])
 
     return trainingData, testData
 
@@ -51,7 +50,7 @@ def getMeansVars(dataset):
     vars = []
     for i in classes:
         classData = np.array(classDataset(i, dataset))
-        #print(classData)
+        # print(classData)
         meansFeatures = []
         varsFeatures = []
         for i in range(nFeat):
@@ -83,20 +82,6 @@ def classDataset(c, dataset):
             cDataset.append(row)
     return cDataset
 
-def pClass(c, dataset):
-    cont = 0
-    n = len(dataset)
-    colClass = len(dataset[0])-1
-    nFeatures = colClass
-    means = np.zeros(nFeatures)
-    for row in dataset:
-        if row[colClass] == str(c):
-            cont += 1
-            for i in range(nFeatures):
-                means[i] += float(row[i])
-
-    return round(cont/n,4), np.round(means/cont,4)
-
 # -----------------------------------
 # ------------- MAIN ----------------
 # -----------------------------------
@@ -104,35 +89,64 @@ def pClass(c, dataset):
 dataset = readCsv("Data_Iris.csv")
 # dataset = readCsv("../TC4/features.csv")
 
-trainingData, testData = setTrainingData(0.8, dataset)
-#print(trainingData)
-#print(testData)
+# numberOfSimu = int(input("Enter qtd tests: "))
+numberOfSimu = 10
 
-classes = classQtd(trainingData)
-print('Classes: ' +str(classes))
+meanAccuracy = 0
 
-nFeat = nFeatures(trainingData)
-print('Number of Features: ' +str(nFeat))
+for i in range(numberOfSimu):
+    trainingData, testData = setTrainingData(0.8, dataset)
+    #print(trainingData)
+    #print(testData)
 
-means, vars = getMeansVars(trainingData)
-print("Means: "+str(means))
-print("Vars: "+str(vars))
+    classes = classQtd(trainingData)
+    #print('Classes: ' +str(classes))
 
-probs = classesProbabilities(trainingData)
-print("Classes Probabilitites: "+str(probs))
+    nFeat = nFeatures(trainingData)
+    #print('Number of Features: ' +str(nFeat))
+
+    means, vars = getMeansVars(trainingData)
+    #print("Means: "+str(means))
+    #print("Vars: "+str(vars))
+
+    probsClass = classesProbabilities(trainingData)
+    #print("Classes Probabilitites: "+str(probsClass))
 
 
+    pi = math.pi
 
-pi = math.pi
-# pFeatClass = (1/math.sqrt(2*pi*vars[0,0]))*math.exp(-(()/()))
+    accuracy = 0
+    for image in testData:
 
+        pFeatClass = np.ones(len(probsClass))
+        Pfeatures = 0
+        for j in range(len(probsClass)):
+            for n in range(nFeat):
+                if vars[j,n] == 0:
+                    pFeatClass[j] = 0
+                else:
+                    pFeatClass[j] *= (1/math.sqrt(2*pi*vars[j,n]))*math.exp(-((float(image[n])-means[j,n])**2/(2*vars[j,n])))
+            Pfeatures += pFeatClass[j]*probsClass[j]
 
-# p0, means0 = pClass(0, trainingData)
-# p1, means1 = pClass(1, trainingData)
-# p2, means2 = pClass(2, trainingData)
+        # print(pFeatClass)
 
-# p = [p0,p1,p2]
+        pClassFeat = []
+        for p in range(len(pFeatClass)):
+            pClassFeat.append(round(pFeatClass[p]*probsClass[p]/Pfeatures,4))
 
-# print(np.array([means0,means1, means2]))
+        # print(pClassFeat)   #Probabilities of total classes
+        c = classCol(trainingData)
+        # print(image[c])
+        if pClassFeat.index(max(pClassFeat)) == float(image[c]):
+            accuracy += 1
+        #     print("Acerto")
+        # else:
+        #     print("Error")
 
-# print(p)
+    accuracy = round(accuracy/len(testData),4)
+    print('Accuracy: '+str(accuracy*100)+'%')
+
+    meanAccuracy += accuracy
+
+meanAccuracy = round(meanAccuracy*100/numberOfSimu,2)
+print('Mean Accuracy: '+str(meanAccuracy)+'%')
