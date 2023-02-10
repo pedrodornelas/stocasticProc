@@ -86,8 +86,8 @@ def classDataset(c, dataset):
 # ------------- MAIN ----------------
 # -----------------------------------
 
-dataset = readCsv("Data_Iris.csv")
-# dataset = readCsv("../TC4/features.csv")
+# dataset = readCsv("Data_Iris.csv")
+dataset = readCsv("../TC4/features.csv")
 
 # numberOfSimu = int(input("Enter qtd tests: "))
 numberOfSimu = 10
@@ -123,18 +123,18 @@ for i in range(numberOfSimu):
         for j in range(len(probsClass)):
             for n in range(nFeat):
                 if vars[j,n] == 0:
-                    pFeatClass[j] = 0
-                else:
-                    pFeatClass[j] *= (1/math.sqrt(2*pi*vars[j,n]))*math.exp(-((float(image[n])-means[j,n])**2/(2*vars[j,n])))
+                    vars[j,n]=0.0000000001
+                    
+                pFeatClass[j] *= (1/math.sqrt(2*pi*vars[j,n]))*math.exp(-((float(image[n])-means[j,n])**2/(2*vars[j,n])))
             Pfeatures += pFeatClass[j]*probsClass[j]
 
-        # print(pFeatClass)
+        #print(pFeatClass)
 
         pClassFeat = []
         for p in range(len(pFeatClass)):
             pClassFeat.append(round(pFeatClass[p]*probsClass[p]/Pfeatures,4))
 
-        # print(pClassFeat)   #Probabilities of total classes
+        #print(pClassFeat)   #Probabilities of total classes
         c = classCol(trainingData)
         # print(image[c])
         if pClassFeat.index(max(pClassFeat)) == float(image[c]):
