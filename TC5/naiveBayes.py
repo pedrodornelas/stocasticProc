@@ -86,13 +86,13 @@ def classDataset(c, dataset):
 # ------------- MAIN ----------------
 # -----------------------------------
 
-# dataset = readCsv("Data_Iris.csv")
-dataset = readCsv("../TC4/features.csv")
+dataset = readCsv("Data_Iris.csv")
+# dataset = readCsv("../TC4/features.csv")
 
 # numberOfSimu = int(input("Enter qtd tests: "))
 numberOfSimu = 10
 
-meanAccuracy = 0
+arrAccuracy = []
 
 for i in range(numberOfSimu):
     trainingData, testData = setTrainingData(0.8, dataset)
@@ -144,9 +144,13 @@ for i in range(numberOfSimu):
         #     print("Error")
 
     accuracy = round(accuracy/len(testData),4)
-    print('Accuracy: '+str(accuracy*100)+'%')
+    print('Acc: '+str(accuracy*100)+'%')
 
-    meanAccuracy += accuracy
+    arrAccuracy.append(accuracy)
 
-meanAccuracy = round(meanAccuracy*100/numberOfSimu,2)
+meanAccuracy = np.round(np.mean(np.array(arrAccuracy)),4)*100
+varAccuracy = np.round(np.var(100*np.array(arrAccuracy)),4)
+stdesAccuracy = np.round(math.sqrt(varAccuracy),4)
 print('Mean Accuracy: '+str(meanAccuracy)+'%')
+print('Variance Accuracy: '+str(varAccuracy))
+print('Stan. Deviation Accuracy: '+str(stdesAccuracy))
