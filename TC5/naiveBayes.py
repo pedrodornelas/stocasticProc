@@ -95,6 +95,9 @@ numberOfSimu = 10
 arrAccuracy = []
 
 for i in range(numberOfSimu):
+    # aqui pode-se alterar a taxa para ter o conjunto de treinamento e consequentemente o conjunto de testes. 
+    # Alterando em pouco este parâmetro não houve muita diferença nos resultados, porém, uma alteração maior pode inviabilizar as análises
+    # como por exemplo, caso o conjunto seja muito pequeno pode ser que alguma das variações de plantas não estejam no treinamento, o que gera um erro
     trainingData, testData = setTrainingData(0.8, dataset)
     #print(trainingData)
     #print(testData)
